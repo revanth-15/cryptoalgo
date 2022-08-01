@@ -1,0 +1,373 @@
+########
+### 1 caesar cipher
+pt = input("Enter the plain Text").lower()
+pt = [ord(a)-97 for a in pt]
+key = int(input("Enter the key"))
+print("Encrypted text is")
+cip = []
+for i in pt:
+    cip.append((i+key)%26)
+    print(chr((i+key)%26+97),end="")
+print()
+print("Decrypted text is")
+for i in cip:
+    print(chr((i-key)%26+97),end="")
+
+#########
+
+#########
+## 2 play fair cipher
+from collections import OrderdDict
+def find(a,b):
+    temp = 0
+    r1,c1,r2,c2 =0,0,0,0
+    for i in range(25):
+        if temp!=2:
+            if a==keym[i//5][i%5]:
+                r1,c1 = i//5,i%5
+                temp+=1
+            if b==keym[i//5][i%5]:
+                r2,c2 = i//5,i%5
+                temp+=1
+        else:
+            break
+    #checking the 3 conditions
+    #1st is checking the same row if same then we need to just increase the row count
+    if(c1==c2):
+        print("{}{}".format(keym[(r1+1)%5][c1],keym[(r2+1)%5][c2]),end="")
+    elif(r1==r2):
+        print("{}{}".format(keym[r1][(c1+1)%5],keym[r2][(c2+1)%5]),end="")
+    else:
+        print("{}{}".format(keym[r1][c2],keym[r2][c1]),end="")
+
+
+#user inputs
+pt = input("Enter the plainText: ").replace(' ','')
+key_user = input("Enter the key: ").replace(' ','')
+# pt = "nittemeenakshiinstuteoftechnology"
+# key = "monarrchy"
+#convert given string to lower case
+pt = pt.lower()
+key = key.lower()
+pt.replace('j','i')
+key.replace('j','i')
+pt = [a for a in pt]
+for i in range(0,len(pt),2):
+    if pt[i]==pt[i+1]:
+        pt.insert(i+1,'x')
+while(len(pt)%2!=0):
+    pt.append('z')
+#Unique Values in Key
+keyunique = list(OrderedDict.fromkeys(key_user).keys())
+#key1,key2 = set(),list()
+#for a in key:
+#    if a not in key1:
+#        key1.add(a)
+#        key2.append(a)
+
+#make key only unique values
+#creating the key matrix
+global keym 
+keym = [['0' for i in range(5)] for j in range(5)]
+alpha = [chr(i+97) for i in range(26)]
+#removing j since i and j are similiar
+alpha.remove('j')
+
+#matrix filling
+count,j =0,0
+for i in range(25):
+    if(count<len(keyunique)):
+        alpha.remove(keyunique[count])
+        keym[i//5][i%5] = keyunique[count]
+        count+=1
+    else:
+        keym[i//5][i%5] = alpha[j]
+        j+=1
+
+for i in range(0,len(pt),2):
+    find(pt[i],pt[i+1])
+
+
+
+
+
+
+
+
+##########
+### 3 Hill cipher
+import numpy as np
+pt = input("Enter the plain text ").lower()
+key = input("Enter the key ").lower()
+pt = np.array([(ord(a)-97) for a in pt])
+key = np.array([(ord(b)-97) for b in key]) #converting alphabets to ascii values
+
+#converting the given text to lowercase
+
+if(len(key)==4):
+    size = 2
+    keym = key.reshape(2,2)
+if(len(key)==9):
+    size = 3
+    keym = key.reshape(3,3)
+    
+# loop to append extra characters
+while(len(pt)%size!=0):
+    pt = np.append(pt,23)
+
+#splits the array into equal parts
+ptm = np.array_split(pt,len(pt)/size)
+print("Encrypted text is")
+enc = []
+for a in ptm:
+    a = a.reshape(size,1)
+    encr = np.dot(keym,a)%26
+    for a in np.nditer(encr):
+        enc.append(a)
+        print(chr(a+97),end=" ")
+print()    
+print("decrypted text is")
+adj = np.linalg.inv(keym)
+det = round(np.linalg.det(keym))
+adj = adj*det  # inverse*det = adjacent matrix
+
+#np.where() to add all the negative numbers 
+np.where(adj<0,adj+26,adj)
+
+# loop to find the inverse which is used to multiply with matrix
+# use extended euclidean algorithm instead of this.
+x = 1
+while((det*x)%26!=1):
+    x+=1
+
+final = (x*adj)%26 #final is the inverse matrix of the key
+enc = np.array(enc) #enc is the ciphertext
+encm = np.array_split(enc,len(enc)/size) #spliting it into equal sizes
+for a in encm:
+    a = a.reshape(size,1)
+    decr = np.round_(np.dot(final,a))
+    decr = decr.astype(int)
+    decr = decr%26
+    for a in np.nditer(decr):
+        print(chr(a+97),end=" ")
+############
+
+################
+# 4 vigner cipher
+pt = input().lower()
+key = input().lower()
+pt = [ord(a)-97 for a in pt]
+key = [ord(a)-97 for a in key]
+
+i=0
+while(len(key)!=len(pt)):
+    key.append(key[i])
+    i+=1
+    if(i==len(key)):
+        i=0
+res = []
+for i,j in zip(pt,key):
+	 a = (i+j)%26
+    res.append(a)
+    print(chr(a+97),end="")
+print()
+print("Decrypted text is ")
+for i,j in zip(res,key):
+	print(chr((i-j)%26+97),end="")
+
+#############
+
+
+
+
+#######
+## 5 railfence cipher
+pt = input("Enter the plain text: ")
+key = int(input("Enter the key: "))	
+res = [['0' for j in range(0,len(pt))]for j in range(0,key)]
+r,c=0,0
+temp = 1
+for i in pt:
+    res[r][c]=i
+    c+=1
+    if temp==1:
+        r+=1
+        if r>=key-1:
+            temp=0
+    else:
+        r-=1
+        if r<=0:
+            temp = 1
+
+for i in range(0,key):
+    for j in range(0,len(pt)):
+        if res[i][j]!='0':
+            print(res[i][j],end="")
+#########
+
+########
+## 7 RSA
+def gcd(p,q):
+    while(q!=0):
+        p,q=q,p%q
+    if p==1:
+        return True
+    else:
+        return False
+
+pt = int(input("Enter the plan text"))
+p = int(input("Enter the first prime number"))
+q = int(input("Enter the second prime number"))
+n = p*q
+pi = (p-1)*(q-1)
+res=[]
+for i in range(2,pi):
+    if gcd(i,pi):
+        res.append(i)
+print(res)
+e = int(input("Enter your public key e"))
+x=1
+while((e*x)%pi!=1):
+    x+=1
+
+print("corresponding d(private key) is ",x)
+cip = (pt**e)%n
+print("The cipher text is",cip)
+dec = (cip**x)%n
+print("The decrypted text is ",dec)
+######
+
+#######
+## 8 DIFFIE
+p=int(input("Enter the prime number p:  "))
+alpha=int(input("Enter the alpha:   "))
+
+a=int(input("Enter the private key of a:    "))
+b=int(input("Enter the private key of b:    "))
+
+y1=int(pow(alpha,a,p))
+y2=int(pow(alpha,b,p))
+
+k1=int(pow(y2,a,p))
+k2=int(pow(y1,b,p))
+
+if(k1==k2):
+    print("Common key is used:  ",k1)
+
+else:
+    print("Error")
+#######
+
+
+###############
+##### 6 DES
+def applyTable(a, P):
+	print("Apply permutation: ",a, P,end="->")
+	res = ""
+	for ele in P:
+		res += a[ele-1]
+	print(res)
+	return res
+	
+def shift(a):
+	print("Apply shift: ",a[1:] + a[0])
+	return a[1:] + a[0]
+
+def xor(a, key):
+	res = ""
+	for i in range(len(key)):
+		if a[i] == key[i]:
+			res += '0'
+		else:
+			res += '1'
+	return res
+def toBin(a):
+	if a == "00":
+		return 0
+	elif a == "01":
+		return 1
+	elif a == "10":
+		return 2
+	else:
+		return 3
+def toDig(a):
+	if a == 0:
+		return "00"
+	elif a == 1:
+		return "01"
+	elif a == 2:
+		return "10"
+	else:
+		return "11"
+
+def sbox(s0, a):
+	row = a[0] + a[-1]
+	col = a[1] + a[2]
+	row = toBin(row)
+	col = toBin(col)
+	ele = s0[row][col]
+	return toDig(ele)
+	
+
+def function(pt, k1, s0, s1, EP, P4):
+	left = pt[:4]
+	right = pt[4:]
+	temp = applyTable(right, EP)
+	temp = xor(temp, k1)
+	left = temp[:4]
+	right = temp[4:]
+	lsbox = sbox(s0, left)
+	rsbox = sbox(s1, right)
+	temp = lsbox + rsbox
+	temp = applyTable(temp, P4)
+	temp = xor(temp, pt[:4])
+	return temp + pt[4:]
+
+P10=[3,5,2,7,4,10,1,9,8,6]
+P8=[6,3,7,4,8,5,10,9]
+IP=[2,6,3,1,4,8,5,7]
+EP=[4,1,2,3,2,3,4,1]
+P4=[2,4,3,1]
+IPi=[4,1,3,5,7,2,8,6]
+s0=[[1, 0, 3, 2], [3, 2, 1, 0], [0, 2, 1, 3], [3, 1, 3, 2]]
+s1=[[0, 1, 2, 3], [2, 0, 1, 3], [3, 0, 1, 0], [2, 1, 0, 3]]
+
+key = input("Enter a 10-bit key: ")
+pt = input("Enter a 8-bit plaintext: ")
+
+#Key
+temp = applyTable(key, P10)
+left = temp[:5]
+right = temp[5:]
+left = shift(left)
+right = shift(right)
+k1 = applyTable(left+right, P8)
+
+left = shift(left)
+right = shift(right)
+left = shift(left)
+right = shift(right)
+k2 = applyTable(left+right, P8)
+
+print("Keys are: ",k1, k2)
+
+#Encrypt
+temp = applyTable(pt, IP)
+temp = function(temp, k1, s0, s1, EP, P4)
+temp = temp[4:] + temp[:4]
+temp = function(temp, k2, s0, s1, EP, P4)
+ct = applyTable(temp, IPi)
+print("Cipher text is: ",ct)
+
+#DEcrypt
+temp = applyTable(ct, IP)
+temp = function(temp, k2, s0, s1, EP, P4)
+temp = temp[4:] + temp[:4]
+temp = function(temp, k1, s0, s1, EP, P4)
+temp = applyTable(temp, IPi)
+print("Plain text is: ",temp)
+#############
+
+
+###########
+####
