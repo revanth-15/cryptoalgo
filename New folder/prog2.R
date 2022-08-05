@@ -1,0 +1,25 @@
+n<-as.integer(readline(prompt('enter the number of employees: ')))
+empid<-vector(mode='integer',length=n)
+ename<-vector(mode='character',length=n)
+DOJ<-vector(mode='character',length=n)
+empcode<-vector(mode='integer',length=n)
+dept<-vector(mode='character',length=n)
+design<-vector(mode='character',length=n)
+print('enter the employees empid ename DOJ empcode dept and design : ')
+for(i in 1:n) {
+  empid[i]<-as.integer(readline())
+  ename[i]<-as.character(readline())
+  DOJ[i]<-as.character(readline())
+  empcode[i]<-as.integer(readline())
+  dept[i]<-as.character(readline())
+  design[i]<-as.character(readline())
+
+}
+emp<-data.frame(empid,ename,DOJ,empcode,dept,design)
+write.csv(emp,file="emp.csv")
+read.csv(("emp.csv"))
+a<-data.frame(4,4,'D','26-10-2010','CSE','student')
+write.table(a,file='emp.csv',append=TRUE,sep=',',quote=FALSE,col.names=FALSE,row.names=FALSE)
+read.csv(("emp.csv"))
+read.csv2(("emp.csv"))
+

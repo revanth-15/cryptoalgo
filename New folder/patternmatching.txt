@@ -1,0 +1,19 @@
+object patternmatching{
+	abstract class Notification
+		case class Email(sender: String, title:String, body:String) extends Notification
+		case class SMS(sender: String, message:String) extends Notification
+	def showNotification(notification: Notification): String={
+		notification match{
+			case Email(emailAddr,subject,_) =>
+				s"you have recieved an email from $emailAddr with the subject $subject"
+			case SMS(caller,message) =>
+				s"you got an sms from $caller with message $message"
+			}
+	}
+	def main(args: Array[String]) {
+		var sms=SMS("7022569055","hi!! this is Rohan")
+		var email=Email("rohanpalekar@gmail.com","BDT lab","Today is the day of lab internals")
+		println(showNotification(sms))
+		println(showNotification(email))
+	}
+}
